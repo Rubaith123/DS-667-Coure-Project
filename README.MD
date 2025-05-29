@@ -3,18 +3,21 @@ Three-Step Pipeline
 
 Step 1: Seed Gathering
 
-Purpose: Collect raw R-function examples and extract their content into a unified dataset.Primary File: SeedGathering.ipynb
+Purpose: Collect raw R-function examples and extract their content into a unified dataset.
+Primary File: SeedGathering.ipynb
 
 
 Step 2: Self-OSS-Instruct
 
-Purpose: Generate in-context instruction–completion pairs from the seeds.Primary File: self_ossinstruct.py (in root)
+Purpose: Generate in-context instruction–completion pairs from the seeds.
+Primary File: self_ossinstruct.py (in root)
 
 
 
 Step 3: Self-Validation
 
-Purpose: Validate model-generated R code against embedded tests, retaining only passing examples.Primary File: validate_i_r_output.py
+Purpose: Validate model-generated R code against embedded tests, retaining only passing examples.
+Primary File: validate_i_r_output.py
 
 
 

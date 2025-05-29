@@ -1,0 +1,250 @@
+### System: I->R
+You are an extremely intelligent AI coding assistant specialized in R. Provide an accurate and reliable response to each user instruction, delivering an R function or program that satisfies the requirements. Use roxygen2 docstrings to document functions, including `@param`, `@return`, and `@examples` where appropriate. After delivering your response, include a series of executable tests using `stopifnot` to verify its correctness.
+
+### System: C->I
+Create a series of independent coding tasks in R that are original, distinct, diverse, and high-quality, fostering logical thinking. Each task must adhere to specified properties:
+- category: the type of task (e.g., function implementation, program implementation)
+- language: R
+- difficulty: the complexity level (e.g., easy, medium, hard)
+- concepts: fundamental R principles and techniques (e.g., vectorization, data frame manipulation, statistical modeling) that developers must understand to solve the task
+Design tasks so that the relevant concepts emerge naturally as the most appropriate solutions, without explicitly mentioning that a particular concept should be used.
+
+### System: S->C
+Extract key programming concepts from the provided R code snippet. List these concepts in a comma-separated format, focusing on R-specific techniques such as vectorization, data frame operations, or functional programming.
+
+### System: S->I
+Gain inspiration from the given R code snippets and create a series of independent coding tasks in R that are original, distinct, diverse, and high-quality, fostering logical thinking.
+
+### Example 1
+[Code]
+#' Calculate the moving average of a numeric vector
+#' @param x A numeric vector
+#' @param window An integer specifying the window size
+#' @return A numeric vector of moving averages
+moving_average <- function(x, window) {
+    if (window <= 0 || window > length(x)) stop("Invalid window size")
+    result <- numeric(length(x) - window + 1)
+    for (i in seq_len(length(result))) {
+        result[i] <- mean(x[i:(i + window - 1)])
+    }
+    return(result)
+}
+
+[Property]
+category: function implementation
+language: R
+difficulty: medium
+concepts: vectorization, sliding window computation, input validation
+
+[Instruction]
+Write an R function that computes the moving average of a numeric vector over a specified window size. The function should return a vector of averages, where each element is the mean of the corresponding window of values. Include input validation to ensure the window size is valid.
+
+[Response]
+#' Calculate the moving average of a numeric vector
+#' @param x A numeric vector
+#' @param window An integer specifying the window size
+#' @return A numeric vector of moving averages
+#' @examples
+#' moving_average(c(1, 2, 3, 4, 5), 3)
+moving_average <- function(x, window) {
+    if (!is.numeric(x)) stop("Input must be numeric")
+    if (window <= 0 || window > length(x)) stop("Invalid window size")
+    result <- numeric(length(x) - window + 1)
+    for (i in seq_len(length(result))) {
+        result[i] <- mean(x[i:(i + window - 1)])
+    }
+    return(result)
+}
+
+[Tests]
+stopifnot(all.equal(moving_average(c(1, 2, 3, 4, 5), 3), c(2, 3, 4)))
+stopifnot(length(moving_average(c(1, 2, 3, 4), 2)) == 3)
+tryCatch(moving_average(c(1, 2, 3), 4), error = function(e) TRUE)
+
+### Example 2
+[Code]
+#' Filter rows in a data frame based on a threshold
+#' @param df A data frame
+#' @param col_name A string specifying the column to filter
+#' @param threshold A numeric threshold
+#' @return A filtered data frame
+filter_by_threshold <- function(df, col_name, threshold) {
+    if (!col_name %in% names(df)) stop("Column not found")
+    return(df[df[[col_name]] > threshold, ])
+}
+
+[Property]
+category: function implementation
+language: R
+difficulty: easy
+concepts: data frame manipulation, dynamic column access, input validation
+
+[Instruction]
+Create an R function that filters a data frame to keep only rows where a specified numeric column exceeds a given threshold. Ensure the function validates that the column exists in the data frame.
+
+[Response]
+#' Filter rows in a data frame based on a threshold
+#' @param df A data frame
+#' @param col_name A string specifying the column to filter
+#' @param threshold A numeric threshold
+#' @return A filtered data frame
+#' @examples
+#' df <- data.frame(a = 1:5, b = letters[1:5])
+#' filter_by_threshold(df, "a", 3)
+filter_by_threshold <- function(df, col_name, threshold) {
+    if (!is.data.frame(df)) stop("Input must be a data frame")
+    if (!col_name %in% names(df)) stop("Column not found")
+    if (!is.numeric(df[[col_name]])) stop("Column must be numeric")
+    return(df[df[[col_name]] > threshold, ])
+}
+
+[Tests]
+df <- data.frame(a = 1:5, b = letters[1:5])
+stopifnot(nrow(filter_by_threshold(df, "a", 3)) == 2)
+stopifnot(all(filter_by_threshold(df, "a", 3)$a > 3))
+tryCatch(filter_by_threshold(df, "c", 1), error = function(e) TRUE)
+
+### Example 3
+[Code]
+#' Fit a linear regression model and extract coefficients
+#' @param data A data frame with response and predictor variables
+#' @param response A string specifying the response variable
+#' @param predictors A character vector of predictor variables
+#' @return A named vector of coefficients
+fit_linear_model <- function(data, response, predictors) {
+    formula <- as.formula(paste(response, "~", paste(predictors, collapse = "+")))
+    model <- lm(formula, data = data)
+    return(coef(model))
+}
+
+[Property]
+category: function implementation
+language: R
+difficulty: medium
+concepts: statistical modeling, dynamic formula construction, coefficient extraction
+
+[Instruction]
+Write an R function that fits a linear regression model to a data frame, using a specified response variable and a set of predictors. The function should return the model’s coefficients as a named vector. Allow dynamic specification of predictors.
+
+[Response]
+#' Fit a linear regression model and extract coefficients
+#' @param data A data frame with response and predictor variables
+#' @param response A string specifying the response variable
+#' @param predictors A character vector of predictor variables
+#' @return A named vector of coefficients
+#' @examples
+#' data <- data.frame(y = rnorm(10), x1 = 1:10, x2 = rnorm(10))
+#' fit_linear_model(data, "y", c("x1", "x2"))
+fit_linear_model <- function(data, response, predictors) {
+    if (!is.data.frame(data)) stop("Input must be a data frame")
+    if (!response %in% names(data)) stop("Response variable not found")
+    if (!all(predictors %in% names(data))) stop("Some predictors not found")
+    formula <- as.formula(paste(response, "~", paste(predictors, collapse = "+")))
+    model <- lm(formula, data = data)
+    return(coef(model))
+}
+
+[Tests]
+data <- data.frame(y = rnorm(10), x1 = 1:10, x2 = rnorm(10))
+coefs <- fit_linear_model(data, "y", c("x1", "x2"))
+stopifnot(is.numeric(coefs))
+stopifnot(length(coefs) == 3)  # Intercept + 2 predictors
+tryCatch(fit_linear_model(data, "z", c("x1")), error = function(e) TRUE)
+
+### Example 4
+[Code]
+#' Generate a sequence of Fibonacci numbers
+#' @param n An integer specifying the number of Fibonacci numbers
+#' @return A numeric vector of Fibonacci numbers
+fibonacci <- function(n) {
+    if (n <= 0) return(numeric(0))
+    fib <- numeric(n)
+    fib[1] <- 1
+    if (n > 1) fib[2] <- 1
+    for (i in 3:n) {
+        fib[i] <- fib[i-1] + fib[i-2]
+    }
+    return(fib)
+}
+
+[Property]
+category: function implementation
+language: R
+difficulty: easy
+concepts: sequence generation, iterative computation, edge case handling
+
+[Instruction]
+Develop an R function that generates the first n Fibonacci numbers, where each number is the sum of the two preceding ones, starting with 1 and 1. Handle cases where n is non-positive by returning an empty vector.
+
+[Response]
+#' Generate a sequence of Fibonacci numbers
+#' @param n An integer specifying the number of Fibonacci numbers
+#' @return A numeric vector of Fibonacci numbers
+#' @examples
+#' fibonacci(5)
+fibonacci <- function(n) {
+    if (!is.numeric(n) || n < 0) stop("n must be a non-negative integer")
+    if (n <= 0) return(numeric(0))
+    fib <- numeric(n)
+    fib[1] <- 1
+    if (n > 1) fib[2] <- 1
+    for (i in 3:n) {
+        fib[i] <- fib[i-1] + fib[i-2]
+    }
+    return(fib)
+}
+
+[Tests]
+stopifnot(all.equal(fibonacci(5), c(1, 1, 2, 3, 5)))
+stopifnot(length(fibonacci(0)) == 0)
+stopifnot(length(fibonacci(1)) == 1)
+tryCatch(fibonacci(-1), error = function(e) TRUE)
+
+### Example 5
+[Code]
+#' Plot a histogram of a numeric vector with customizable bins
+#' @param x A numeric vector
+#' @param bins An integer specifying the number of bins
+#' @return A ggplot2 histogram plot
+library(ggplot2)
+plot_histogram <- function(x, bins) {
+    if (!is.numeric(x)) stop("Input must be numeric")
+    if (bins <= 0) stop("Number of bins must be positive")
+    df <- data.frame(x = x)
+    p <- ggplot(df, aes(x = x)) + geom_histogram(bins = bins, fill = "blue", color = "black")
+    return(p)
+}
+
+[Property]
+category: program implementation
+language: R
+difficulty: medium
+concepts: data visualization, ggplot2, input validation
+
+[Instruction]
+Create an R program that generates a histogram of a numeric vector using ggplot2, allowing the user to specify the number of bins. The function should validate inputs and return a ggplot2 plot object.
+
+[Response]
+#' Plot a histogram of a numeric vector with customizable bins
+#' @param x A numeric vector
+#' @param bins An integer specifying the number of bins
+#' @return A ggplot2 histogram plot
+#' @examples
+#' plot_histogram(rnorm(100), 20)
+library(ggplot2)
+plot_histogram <- function(x, bins) {
+    if (!is.numeric(x)) stop("Input must be numeric")
+    if (!is.numeric(bins) || bins <= 0) stop("Number of bins must be positive")
+    df <- data.frame(x = x)
+    p <- ggplot(df, aes(x = x)) + geom_histogram(bins = bins, fill = "blue", color = "black") +
+         theme_minimal()
+    return(p)
+}
+
+[Tests]
+x <- rnorm(100)
+p <- plot_histogram(x, 20)
+stopifnot(inherits(p, "ggplot"))
+stopifnot(length(p$layers) == 1)
+tryCatch(plot_histogram(letters, 10), error = function(e) TRUE)
+tryCatch(plot_histogram(x, 0), error = function(e) TRUE)
